@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}История расчетов{% endblock %}
+{% block content %}
+<section class="hero compact"><h1>История расчетов</h1></section>
+<section class="card">
+<div class="card-head">
+    <h2>Сохраненные запуски</h2>
+    <form method="post" action="{{ url_for('main.history_clear') }}" onsubmit="return confirm('Удалить всю историю расчетов?');">
+        <button type="submit" class="danger">Очистить историю</button>
+    </form>
+</div>
+<table>
+<tr><th>ID</th><th>Дата</th><th>Партия</th><th>Материал</th><th>Статус</th><th></th></tr>
+{% for run in runs %}
+{% set rec = run.recommendation or {} %}
+{% set rec_material = rec.get('material') if rec is mapping else none %}
+{% set rec_summary = rec.get('summary') if rec is mapping else none %}
+<tr>
+    <td>{{ run.id }}</td>
+    <td>{{ run.created_at.strftime('%d.%m.%Y %H:%M') if run.created_at else '-' }}</td>
+    <td>{{ run.batch_code or run.id }}</td>
+    <td>{{ run.material.name if run.material else (rec_material.get('name') if rec_material is mapping and rec_material.get('name') else "из архива") }}</td>
+    <td>{{ run.quality_status or (rec_summary.get('status') if rec_summary is mapping else '-') }}</td>
+    <td class="actions-cell">
+        <a class="button-secondary mini" href="{{ url_for('main.history_detail', run_id=run.id) }}">открыть</a>
+        <form class="inline-form" method="post" action="{{ url_for('main.history_delete', run_id=run.id) }}" onsubmit="return confirm('Удалить этот запуск?');">
+            <button type="submit" class="danger mini">удалить</button>
+        </form>
+    </td>
+</tr>
+{% endfor %}
+</table>
+{% if not runs %}<p class="muted">История расчетов пуста.</p>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<section class="hero compact"><h1>Введите логин и пароль сотрудника</h1></section>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+<form method="post" class="card login-card">
+    <div class="field"><label>Логин</label><input type="text" name="username" required autofocus></div>
+    <div class="field"><label>Пароль</label><input type="password" name="password" required></div>
+    <div class="actions"><button type="submit">Войти</button></div>
+</form>
+{% endblock %}

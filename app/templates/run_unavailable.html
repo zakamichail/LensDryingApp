@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Запуск недоступен{% endblock %}
+{% block content %}
+<section class="hero compact">
+    <h1>Запуск недоступен</h1>
+    <p>Эта запись создана старой версией расчета или содержит неполные данные, поэтому ее нельзя открыть как актуальную рекомендацию.</p>
+</section>
+
+<section class="card">
+    <table class="params">
+        <tr><th>ID</th><td>{{ run.id }}</td><th>Партия</th><td>{{ run.batch_code or '-' }}</td></tr>
+        <tr><th>Дата</th><td>{{ run.created_at.strftime('%d.%m.%Y %H:%M') if run.created_at else '-' }}</td><th>Статус</th><td>{{ run.quality_status or '-' }}</td></tr>
+    </table>
+    <div class="actions">
+        <a class="button-secondary" href="{{ url_for('main.history') }}">К истории</a>
+        <form method="post" action="{{ url_for('main.history_delete', run_id=run.id) }}" onsubmit="return confirm('Удалить этот запуск?');">
+            <button type="submit" class="danger">Удалить запуск</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

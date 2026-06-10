@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Пользователи{% endblock %}
+{% block content %}
+<section class="hero compact"><h1>Пользователи</h1></section>
+<section class="card">
+<div class="card-head"><h2>Сотрудники</h2><a class="button-secondary" href="{{ url_for('main.user_new') }}">Добавить пользователя</a></div>
+<table>
+<tr><th>Логин</th><th>Имя сотрудника</th><th>Тип аккаунта</th><th>Активен</th><th></th></tr>
+{% for u in users %}
+<tr>
+    <td>{{ u.username }}</td>
+    <td>{{ u.employee_name }}</td>
+    <td>{{ 'администратор' if u.role == 'admin' else 'технолог' }}</td>
+    <td>{{ 'да' if u.is_active else 'нет' }}</td>
+    <td>{% if u.is_active and u.id != current_user.id %}<form method="post" action="{{ url_for('main.user_delete', user_id=u.id) }}"><button class="danger" type="submit">отключить</button></form>{% endif %}</td>
+</tr>
+{% endfor %}
+</table>
+</section>
+{% endblock %}

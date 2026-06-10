@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Новый пользователь{% endblock %}
+{% block content %}
+<section class="hero compact"><h1>Добавление пользователя</h1><p>Доступно только администратору.</p></section>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+<form method="post" action="{{ url_for('main.user_create') }}" class="card form-grid compact-labels">
+    <div class="field"><label>Логин</label><input type="text" name="username" value="{{ item.username if item else '' }}" required></div>
+    <div class="field wide2"><label>Имя сотрудника</label><input type="text" name="employee_name" value="{{ item.employee_name if item else '' }}" required></div>
+    <div class="field"><label>Тип аккаунта</label><select name="role"><option value="technologist">технолог</option><option value="admin">администратор</option></select></div>
+    <div class="field"><label>Пароль</label><input type="password" name="password" required></div>
+    <div class="wide actions"><button type="submit">Сохранить</button><a class="button-secondary" href="{{ url_for('main.users_page') }}">Отмена</a></div>
+</form>
+{% endblock %}

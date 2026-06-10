@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Подробный расчет{% endblock %}
+{% block content %}
+<section class="hero compact">
+    <h1>Подробный расчет, модели и графики</h1>
+    <p>Партия: {{ run.batch_code }}.</p>
+    <p><a class="button-secondary" href="{{ url_for('main.history_detail', run_id=run.id) }}">Вернуться к рекомендации</a></p>
+</section>
+
+{% for step in result.steps %}
+{% set report = step.model_report %}
+<section class="card">
+    <div class="step-head">
+        <h2>Этап {{ step.nomer_etapa }}. {{ step.pokrytie }}</h2>
+        <span class="badge">{{ step.status }}</span>
+    </div>
+
+    <table class="params small-table">
+        <tr>
+            <th>Коэффициент корреляции <button type="button" class="info-button" data-modal-open="model-quality-{{ step.nomer_etapa }}">?</button></th><td>{{ report.diagnostics.model_quality|ru(3) }}</td>
+            <th>Индекс экстраполяции <button type="button" class="info-button" data-modal-open="model-extrapolation-{{ step.nomer_etapa }}">?</button></th><td>{{ report.diagnostics.extrapolation_index|ru(3) }}</td>
+        </tr>
+        <tr><th>Температура сушки</th><td>{{ step.temperatura_sush_c|ru(1) }} °C</td><th>Итоговое время</th><td>{{ step.polnoe_vremya_etapa_min|ru(1) }} мин</td></tr>
+        <tr><th>Температурный предел этапа</th><td>{{ step.temperaturnyi_predel_c|ru(1) }} °C</td><th>Коэффициент порога температуры</th><td>{{ step.koeffitsient_poroga_temperatury_pct|ru(1) }} %</td></tr>
+        <tr><th>Ограничивает</th><td>{{ step.istochnik_temperaturnogo_predela }}</td><th></th><td></td></tr>
+        <tr>
+            <th>ΔT</th><td>{{ step.delta_t_c|ru(2) }} °C</td>
+            <th>Оценка риска <button type="button" class="info-button" data-modal-open="model-risk-{{ step.nomer_etapa }}">?</button></th><td>{{ step.ocenka_riska|ru(3) }}</td>
+        </tr>
+    </table>
+    <dialog class="info-dialog" id="model-quality-{{ step.nomer_etapa }}">
+        <form method="dialog">
+            <button class="dialog-close" value="close">×</button>
+            <h3>Коэффициент корреляции</h3>
+            <p>r показывает направление и плотность связи между входной и найденной переменной. Значение по модулю ближе к 1 означает более выраженную связь.</p>
+        </form>
+    </dialog>
+    <dialog class="info-dialog" id="model-extrapolation-{{ step.nomer_etapa }}">
+        <form method="dialog">
+            <button class="dialog-close" value="close">×</button>
+            <h3>Индекс экстраполяции</h3>
+            <p>Это среднее расстояние текущего режима от центра архивной выборки в стандартизованных признаках регрессионных моделей этапа.</p>
+            <p>Для каждой модели считается z(x) = (x - среднее архива) / стандартное отклонение архива, затем d = sqrt(mean(z²)). Показанное значение — среднее d по моделям.</p>
+            <p>Чем выше индекс, тем дальше расчетный режим от области, хорошо представленной в архиве.</p>
+        </form>
+    </dialog>
+    <dialog class="info-dialog" id="model-risk-{{ step.nomer_etapa }}">
+        <form method="dialog">
+            <button class="dialog-close" value="close">×</button>
+            <h3>Оценка риска этапа</h3>
+            <p>Это расчетная вероятность дефектного исхода p для этапа. Для графика p деф от Tсуш метка дефекта равна 1 для температурного дефекта этапа и 0 для годного этапа.</p>
+            <p>Модель строится как сигмоидная функция p деф = 1 / (1 + exp(-(k·Tсуш + b))).</p>
+            <p>Верхняя граница допуска p_high подбирается по архивным прогнозам. Значения выше нее требуют контроля; значения выше расчетной границы p_border считаются режимом на границе допуска.</p>
+        </form>
+    </dialog>
+
+    <h3>Графики</h3>
+    <div class="plot-grid">
+        {% for graph in report.calculation_graphs %}
+        <div class="plot-card">
+            <div class="plot-actions">
+                <strong>{{ graph.name }}</strong>
+                <a class="button-secondary mini" target="_blank" href="{{ url_for('main.history_model_graph', run_id=run.id, stage_number=step.nomer_etapa, graph_kind='calc', graph_key=graph.key) }}">Открыть график</a>
+            </div>
+            {{ graph.graph|safe }}
+        </div>
+        {% endfor %}
+        {% for model in report.models %}
+            {% for graph in model.feature_graphs %}
+            <div class="plot-card">
+                <div class="plot-actions">
+                    <strong class="two-line-title">{{ graph.feature }}</strong>
+                    <a class="button-secondary mini" target="_blank" href="{{ url_for('main.history_model_graph', run_id=run.id, stage_number=step.nomer_etapa, graph_kind='pair', graph_key=graph.key) }}">Открыть график</a>
+                </div>
+                {{ graph.graph|safe }}
+                <div class="plot-note">{{ model.equation_label }}: <code>{{ model.equation }}</code></div>
+                <div class="plot-note">Коэффициент корреляции r={{ model.correlation|ru(3) }}{% if model.selected_y_text %}; {{ model.selected_y_text }}{% endif %}</div>
+            </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <h3>Коэффициенты моделей</h3>
+    {% for model in report.models %}
+    <details class="model-details">
+        <summary>{{ model.name }}{% if model.unit and model.unit != 'доля' %}, {{ model.unit }}{% endif %}; r={{ model.correlation|ru(3) }}</summary>
+        <table class="params coefficient-table">
+            <tr><th>Коэффициенты</th><th>Обозначение</th><th>Значение</th></tr>
+            {% for row in model.coefficients %}
+            <tr>
+                <td>{{ row.term }}</td>
+                <td><strong>{{ row.symbol }}</strong>{% if row.unit %}, {{ row.unit }}{% endif %}. {{ row.meaning }}</td>
+                <td>{{ row.coef|ru(6) }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </details>
+    {% endfor %}
+</section>
+{% endfor %}
+{% endblock %}

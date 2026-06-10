@@ -1,0 +1,80 @@
+2026-05-29 00:09:11.425 MSK [36891] FATAL:  shmat(id=327681, addr=0x0, flags=0x0) failed: Operation not permitted
+2026-05-29 00:09:11.425 MSK [36891] LOG:  shmctl(327681, 0, 0) failed: Operation not permitted
+2026-05-29 00:09:11.425 MSK [36891] LOG:  database system is shut down
+2026-05-29 00:09:24.708 MSK [36906] LOG:  starting PostgreSQL 16.14 (Homebrew) on x86_64-apple-darwin22.6.0, compiled by Apple clang version 14.0.3 (clang-1403.0.22.14.1), 64-bit
+2026-05-29 00:09:24.713 MSK [36906] LOG:  listening on IPv6 address "::1", port 5432
+2026-05-29 00:09:24.713 MSK [36906] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-05-29 00:09:24.714 MSK [36906] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2026-05-29 00:09:24.724 MSK [36909] LOG:  database system was shut down at 2026-05-29 00:09:04 MSK
+2026-05-29 00:09:24.732 MSK [36906] LOG:  database system is ready to accept connections
+2026-05-29 00:09:50.182 MSK [36946] FATAL:  database "lickmaballs" does not exist
+2026-05-29 00:14:24.720 MSK [36907] LOG:  checkpoint starting: time
+2026-05-29 00:16:09.178 MSK [36907] LOG:  checkpoint complete: wrote 1042 buffers (6.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=104.444 s, sync=0.013 s, total=104.458 s; sync files=347, longest=0.001 s, average=0.001 s; distance=4800 kB, estimate=4800 kB; lsn=0/19C3900, redo lsn=0/19C38C8
+2026-05-29 00:50:19.433 MSK [39622] FATAL:  role "lmb" does not exist
+2026-05-29 00:54:24.828 MSK [36907] LOG:  checkpoint starting: time
+2026-05-29 00:54:25.242 MSK [36907] LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.409 s, sync=0.002 s, total=0.415 s; sync files=5, longest=0.001 s, average=0.001 s; distance=1 kB, estimate=4320 kB; lsn=0/19C3F58, redo lsn=0/19C3F20
+2026-05-29 23:57:37.550 MSK [36906] LOG:  received smart shutdown request
+2026-05-29 23:57:37.552 MSK [36906] LOG:  background worker "logical replication launcher" (PID 36912) exited with exit code 1
+2026-05-29 23:57:37.552 MSK [36907] LOG:  shutting down
+2026-05-29 23:57:38.055 MSK [36907] LOG:  checkpoint starting: shutdown immediate
+2026-05-29 23:57:38.059 MSK [36907] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.507 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=3888 kB; lsn=0/19C4020, redo lsn=0/19C4020
+2026-05-29 23:57:38.064 MSK [36906] LOG:  database system is shut down
+2026-05-30 17:04:36.018 MSK [1228] LOG:  starting PostgreSQL 16.14 (Homebrew) on x86_64-apple-darwin22.6.0, compiled by Apple clang version 14.0.3 (clang-1403.0.22.14.1), 64-bit
+2026-05-30 17:04:36.020 MSK [1228] LOG:  listening on IPv6 address "::1", port 5432
+2026-05-30 17:04:36.020 MSK [1228] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-05-30 17:04:36.020 MSK [1228] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2026-05-30 17:04:36.028 MSK [1231] LOG:  database system was shut down at 2026-05-29 23:57:38 MSK
+2026-05-30 17:04:36.034 MSK [1228] LOG:  database system is ready to accept connections
+2026-05-30 17:09:36.036 MSK [1229] LOG:  checkpoint starting: time
+2026-05-30 17:09:36.652 MSK [1229] LOG:  checkpoint complete: wrote 9 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.608 s, sync=0.003 s, total=0.616 s; sync files=7, longest=0.001 s, average=0.001 s; distance=1 kB, estimate=1 kB; lsn=0/19C46B8, redo lsn=0/19C4680
+2026-06-01 17:39:01.561 MSK [1228] LOG:  received smart shutdown request
+2026-06-01 17:39:01.562 MSK [1228] LOG:  background worker "logical replication launcher" (PID 1234) exited with exit code 1
+2026-06-01 17:39:01.563 MSK [1229] LOG:  shutting down
+2026-06-01 17:39:01.563 MSK [1229] LOG:  checkpoint starting: shutdown immediate
+2026-06-01 17:39:01.568 MSK [1229] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.005 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=1 kB; lsn=0/19C4768, redo lsn=0/19C4768
+2026-06-01 17:39:01.570 MSK [1228] LOG:  database system is shut down
+2026-06-04 21:30:46.439 MSK [2509] LOG:  starting PostgreSQL 16.14 (Homebrew) on x86_64-apple-darwin22.6.0, compiled by Apple clang version 14.0.3 (clang-1403.0.22.14.1), 64-bit
+2026-06-04 21:30:46.444 MSK [2509] LOG:  listening on IPv6 address "::1", port 5432
+2026-06-04 21:30:46.444 MSK [2509] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-06-04 21:30:46.445 MSK [2509] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2026-06-04 21:30:46.459 MSK [2512] LOG:  database system was shut down at 2026-06-01 17:39:01 MSK
+2026-06-04 21:30:46.470 MSK [2509] LOG:  database system is ready to accept connections
+2026-06-04 21:35:46.455 MSK [2510] LOG:  checkpoint starting: time
+2026-06-04 21:35:46.460 MSK [2510] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.005 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB; lsn=0/19C4850, redo lsn=0/19C4818
+2026-06-04 22:17:39.324 MSK [3081] FATAL:  database "lickmaballs" does not exist
+2026-06-04 23:41:40.745 MSK [3724] FATAL:  database "lickmaballs" does not exist
+2026-06-04 23:47:05.951 MSK [2510] LOG:  checkpoint starting: time
+2026-06-04 23:47:07.777 MSK [2510] LOG:  checkpoint complete: wrote 19 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.818 s, sync=0.003 s, total=1.827 s; sync files=12, longest=0.001 s, average=0.001 s; distance=65 kB, estimate=65 kB; lsn=0/19D4FD8, redo lsn=0/19D4FA0
+2026-06-05 03:57:35.775 MSK [6618] FATAL:  database "lickmaballs" does not exist
+2026-06-05 04:02:07.325 MSK [2510] LOG:  checkpoint starting: time
+2026-06-05 04:02:08.941 MSK [2510] LOG:  checkpoint complete: wrote 17 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.611 s, sync=0.002 s, total=1.616 s; sync files=13, longest=0.001 s, average=0.001 s; distance=49 kB, estimate=64 kB; lsn=0/19E15F0, redo lsn=0/19E15B8
+2026-06-05 07:43:35.458 MSK [2509] LOG:  could not open file "postmaster.pid": Operation not permitted; continuing anyway
+2026-06-05 07:43:35.471 MSK [9866] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 07:43:54.884 MSK [9927] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:19:36.979 MSK [2509] LOG:  could not open file "postmaster.pid": Operation not permitted; continuing anyway
+2026-06-05 08:19:36.993 MSK [11217] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:19:55.690 MSK [11229] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:20:17.894 MSK [11261] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:20:37.058 MSK [2509] LOG:  could not open file "postmaster.pid": Operation not permitted; continuing anyway
+2026-06-05 08:20:37.060 MSK [11305] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:20:44.681 MSK [11329] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:20:50.885 MSK [11359] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:20:50.887 MSK [11360] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:20:55.691 MSK [11372] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:21:09.471 MSK [11392] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:21:09.923 MSK [11397] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:21:09.925 MSK [11398] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:21:17.912 MSK [11425] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:21:37.058 MSK [2509] LOG:  could not open file "postmaster.pid": Operation not permitted; continuing anyway
+2026-06-05 08:21:37.060 MSK [11467] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:21:41.302 MSK [11478] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:21:47.069 MSK [11496] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:21:47.071 MSK [11497] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:21:55.692 MSK [11517] FATAL:  could not open file "global/pg_filenode.map": Operation not permitted
+2026-06-05 08:22:35.570 MSK [12081] FATAL:  database "lickmaballs" does not exist
+2026-06-06 13:13:06.597 MSK [2509] LOG:  received smart shutdown request
+2026-06-06 13:13:06.599 MSK [2509] LOG:  background worker "logical replication launcher" (PID 2515) exited with exit code 1
+2026-06-06 13:13:06.599 MSK [2510] LOG:  shutting down
+2026-06-06 13:13:07.607 MSK [2510] LOG:  checkpoint starting: shutdown immediate
+2026-06-06 13:13:07.618 MSK [2510] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.003 s, sync=0.001 s, total=1.020 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=57 kB; lsn=0/19E16A0, redo lsn=0/19E16A0
+2026-06-06 13:13:07.622 MSK [2509] LOG:  database system is shut down

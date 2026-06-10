@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Материал{% endblock %}
+{% block content %}
+<section class="hero compact"><h1>Материал линзы</h1><p>Запись используется в расчете и сопоставляется с архивом запусков по коду материала.</p></section>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+<form method="post" action="{{ action_url }}" class="card form-grid compact-labels">
+    <div class="field"><label>Код материала</label><input type="text" name="kod" value="{{ item.kod if item else '' }}" required></div>
+    <div class="field wide2"><label>Название</label><input type="text" name="name" value="{{ item.name if item else '' }}" required></div>
+    <div class="field">
+        <label>Группа</label>
+        <select name="group" required>
+            {% for value in material_groups %}<option value="{{ value }}" {% if item and item.group == value %}selected{% endif %}>{{ value }}</option>{% endfor %}
+        </select>
+    </div>
+
+    <div class="field"><label>λ, теплопроводность, Вт/(м·К)</label><input type="text" name="lambda_w_mk" value="{{ item.lambda_w_mk|ru(3) if item else '1,0' }}" required></div>
+    <div class="field"><label>ρ, плотность, кг/м³</label><input type="text" name="density_kg_m3" value="{{ item.density_kg_m3|ru(0) if item else '2500' }}" required></div>
+    <div class="field"><label>c, удельная теплоемкость, Дж/(кг·К)</label><input type="text" name="heat_capacity_j_kgk" value="{{ item.heat_capacity_j_kgk|ru(0) if item else '800' }}" required></div>
+    <div class="field"><label>α, коэффициент теплового расширения, 1/К</label><input type="text" name="expansion_1_k" value="{{ item.expansion_1_k|rusci if item else '8,00e-06' }}" required></div>
+    <div class="field"><label>Tg, температура стеклования, °C</label><input type="text" name="tg_c" value="{{ item.tg_c|ru(1) if item else '0' }}" required></div>
+    <div class="field"><label>Tmax, максимально допустимая температура, °C</label><input type="text" name="t_max_c" value="{{ item.t_max_c|ru(1) if item else '90' }}" required></div>
+
+    <div class="wide actions">
+        <button type="submit">Сохранить</button>
+        <a class="button-secondary" href="{{ url_for('main.reference') }}">Отмена</a>
+    </div>
+</form>
+
+{% if item and item.id %}
+<form method="post" action="{{ url_for('main.material_delete', item_id=item.id) }}" class="card danger-card">
+    <p>Удаление уберет материал из справочника и списка выбора.</p>
+    <button type="submit" class="danger">Удалить материал</button>
+</form>
+{% endif %}
+{% endblock %}

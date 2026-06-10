@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Журнал событий{% endblock %}
+{% block content %}
+<section class="hero compact"><h1>Журнал событий</h1></section>
+<section class="card">
+<div class="scroll-table"><table>
+<tr><th>Дата</th><th>Пользователь</th><th>Действие</th><th>Объект</th><th>Детали</th></tr>
+{% for log in logs %}
+<tr>
+    <td>{{ log.created_at.strftime('%d.%m.%Y %H:%M:%S') if log.created_at else '-' }}</td>
+    <td>{{ log.username or '-' }}</td>
+    <td>{{ log.action or '-' }}</td>
+    <td>{{ log.entity or '-' }}</td>
+    <td>{{ log.details or '-' }}</td>
+</tr>
+{% endfor %}
+</table></div>
+{% if not logs %}<p class="muted">Журнал событий пуст.</p>{% endif %}
+</section>
+{% endblock %}

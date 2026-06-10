@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Пропиточный состав{% endblock %}
+{% block content %}
+<section class="hero compact">
+    <h1>{% if item and item.id %}Редактирование пропиточного состава{% else %}Новый пропиточный состав{% endif %}</h1>
+    <p>Запись сохраняется в базе данных и сразу доступна в расчете.</p>
+</section>
+
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+
+<form method="post" action="{{ action_url }}" class="card form-grid compact-labels">
+    <div class="field"><label>Код</label><input type="text" name="kod" value="{{ item.kod if item else '' }}" required></div>
+    <div class="field wide2"><label>Название</label><input type="text" name="name" value="{{ item.name if item else '' }}" required></div>
+    <div class="field">
+        <label>Функциональный тип покрытия</label>
+        <select name="stage_group" required>
+            {% for value in stage_groups %}<option value="{{ value }}" {% if item and item.stage_group == value %}selected{% endif %}>{{ value }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="field">
+        <label>Тип пропитки по основе</label>
+        <select name="base_type" required>
+            {% for value in base_types %}<option value="{{ value }}" {% if item and item.base_type == value %}selected{% endif %}>{{ value }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="field">
+        <label>Метод нанесения</label>
+        <select name="application_method" required>
+            {% for value in application_methods %}<option value="{{ value }}" {% if item and item.application_method == value %}selected{% endif %}>{{ value }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="field wide"><label>Состав</label><textarea name="composition" required>{{ item.composition if item else '' }}</textarea></div>
+    <div class="field wide"><label>Назначение</label><textarea name="purpose" required>{{ item.purpose if item else '' }}</textarea></div>
+
+    <div class="field"><label>η, вязкость, мПа·с</label><input type="text" name="viscosity_mpa_s" value="{{ item.viscosity_mpa_s|ru(1) if item else '20' }}" required></div>
+    <div class="field"><label>σ, поверхностное натяжение, мН/м</label><input type="text" name="surface_tension_mn_m" value="{{ item.surface_tension_mn_m|ru(1) if item else '30' }}" required></div>
+    <div class="field"><label>Tmax состава, °C</label><input type="text" name="thermal_stability_c" value="{{ item.thermal_stability_c|ru(1) if item else '75' }}" required></div>
+    <div class="field"><label>W0, начальное содержание летучих компонентов, %</label><input type="text" name="initial_solvent_pct" value="{{ item.initial_solvent_pct|ru(1) if item else '35' }}" required></div>
+    <div class="field checks vertical">
+        <label><input type="checkbox" name="requires_uv" {% if item and item.requires_uv %}checked{% endif %}> УФ-отверждение</label>
+        <label><input type="checkbox" name="external_only" {% if item and item.external_only %}checked{% endif %}> Не перекрывать следующим слоем</label>
+    </div>
+
+    <div class="wide actions">
+        <button type="submit">Сохранить</button>
+        <a class="button-secondary" href="{{ url_for('main.reference') }}">Отмена</a>
+    </div>
+</form>
+
+{% if item and item.id %}
+<form method="post" action="{{ url_for('main.impregnation_delete', item_id=item.id) }}" class="card danger-card">
+    <p>Удаление уберет состав из справочника и из списка выбора.</p>
+    <button type="submit" class="danger">Удалить состав</button>
+</form>
+{% endif %}
+{% endblock %}

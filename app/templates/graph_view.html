@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}График расчета{% endblock %}
+{% block content %}
+<section class="hero compact">
+    <h1>{{ graph.name }}</h1>
+    <p>Партия: {{ run.batch_code }}. Этап {{ step.nomer_etapa }}: {{ step.pokrytie }}.</p>
+    <p><a class="button-secondary" href="{{ url_for('main.history_models', run_id=run.id) }}">Вернуться к моделям</a></p>
+</section>
+
+<section class="card graph-open-card">
+    {{ graph.graph|safe }}
+    {% if graph.equation %}<div class="plot-note">{{ graph.equation_label or 'Модель в соответствии с архивом' }}: <code>{{ graph.equation }}</code></div>{% endif %}
+    {% if graph.correlation is defined %}<div class="plot-note">Коэффициент корреляции r={{ graph.correlation|ru(3) }}{% if graph.selected_y_text %}; {{ graph.selected_y_text }}{% endif %}</div>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Формирование сушки оптических линз{% endblock %}</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header class="topbar">
+    <div class="topbar-inner">
+    <a class="brand" href="{{ url_for('main.index') if current_user.id else url_for('main.login') }}">
+        Формирование сушки оптических линз
+    </a>
+    {% if current_user.id %}
+    <nav class="main-nav">
+        <a class="nav-link{% if request.endpoint == 'main.index' %} active{% endif %}" href="{{ url_for('main.index') }}">Расчет</a>
+        <a class="nav-link{% if request.endpoint in ['main.reference', 'main.material_new', 'main.material_edit', 'main.impregnation_new', 'main.impregnation_edit'] %} active{% endif %}" href="{{ url_for('main.reference') }}">Справочники</a>
+        <a class="nav-link{% if request.endpoint == 'main.dataset_page' %} active{% endif %}" href="{{ url_for('main.dataset_page') }}">Архив запусков</a>
+        <a class="nav-link{% if request.endpoint in ['main.history', 'main.history_detail', 'main.history_models', 'main.history_model_graph'] %} active{% endif %}" href="{{ url_for('main.history') }}">История</a>
+        {% if current_user.is_admin %}
+        <a class="nav-link{% if request.endpoint in ['main.users_page', 'main.user_new', 'main.user_edit'] %} active{% endif %}" href="{{ url_for('main.users_page') }}">Пользователи</a>
+        <a class="nav-link{% if request.endpoint == 'main.audit_page' %} active{% endif %}" href="{{ url_for('main.audit_page') }}">Журнал событий</a>
+        {% endif %}
+    </nav>
+    <div class="topbar-actions">
+        <a class="user-chip{% if request.endpoint == 'main.account_page' %} active{% endif %}" href="{{ url_for('main.account_page') }}">
+            <span>{{ current_user.employee_name }}</span>
+            <strong>{{ 'администратор' if current_user.role == 'admin' else 'технолог' }}</strong>
+        </a>
+        <a class="logout-link" href="{{ url_for('main.logout') }}">Выход</a>
+    </div>
+    {% endif %}
+    </div>
+</header>
+<main class="container">
+    {% block content %}{% endblock %}
+</main>
+<script>
+document.addEventListener("click", (event) => {
+    const openButton = event.target.closest("[data-modal-open]");
+    if (openButton) {
+        const dialog = document.getElementById(openButton.dataset.modalOpen);
+        if (dialog && typeof dialog.showModal === "function") {
+            dialog.showModal();
+        }
+    }
+    if (event.target.classList.contains("info-dialog")) {
+        event.target.close();
+    }
+});
+</script>
+</body>
+</html>

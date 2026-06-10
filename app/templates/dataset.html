@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Архив запусков{% endblock %}
+{% block content %}
+<section class="hero compact">
+    <h1>Архив технологических запусков</h1>
+</section>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+<section class="card">
+    {% if csv_exists %}
+    <p>Файл: <strong>{{ csv_path }}</strong>. Записей: <strong>{{ row_count }}</strong>.</p>
+    {% if current_user.is_admin %}<a class="button-secondary" href="{{ url_for('main.dataset_download') }}">Скачать CSV</a>{% endif %}
+    {% else %}
+    <p>CSV-файл не найден в каталоге data.</p>
+    {% endif %}
+</section>
+{% if current_user.is_admin %}
+<section class="card">
+    <h2>Загрузить свой CSV</h2>
+    <form method="post" action="{{ url_for('main.dataset_upload') }}" enctype="multipart/form-data" class="dataset-upload-form">
+        <input type="file" name="csv_file" accept=".csv" required>
+        <button type="submit">Загрузить</button>
+    </form>
+    <p class="muted">Разделитель: точка с запятой. Дробные числа можно писать через запятую.</p>
+</section>
+{% endif %}
+{% if preview %}
+<section class="card">
+    <h2>Первые строки</h2>
+    <div class="scroll-table"><table>
+        <tr>{% for key in preview[0].keys() %}<th>{{ key }}</th>{% endfor %}</tr>
+        {% for row in preview %}<tr>{% for value in row.values() %}<td>{{ value }}</td>{% endfor %}</tr>{% endfor %}
+    </table></div>
+</section>
+{% endif %}
+{% endblock %}

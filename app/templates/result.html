@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Рекомендация{% endblock %}
+{% block content %}
+<section class="hero compact result-hero">
+    <h1>Сформированная рекомендация</h1>
+    <div class="result-meta">
+        <p>Партия: {{ run.batch_code }}.</p>
+        <p>Общий статус: <strong>{{ result.summary.status }}</strong>.</p>
+    </div>
+    {% set first_step = result.steps[0] if result.steps else none %}
+    {% if run.id %}
+    <div class="hero-actions">
+        {% if first_step and first_step.model_report is defined %}
+        <a class="button" href="{{ url_for('main.history_models', run_id=run.id) }}">Открыть подробный отчет</a>
+        {% endif %}
+        <a class="button-secondary" href="{{ url_for('main.run_dataset_download', run_id=run.id) }}">Скачать запуск в формате CSV</a>
+    </div>
+    {% endif %}
+</section>
+
+<div class="summary-grid">
+    <div class="metric"><span>Этапов</span><b>{{ result.summary.kolichestvo_etapov }}</b></div>
+    <div class="metric"><span>Итоговое время</span><b>{{ (result.summary.sum_polnoe_vremya_min or result.summary.sum_vyderzhka_min)|ru(1) }} мин</b></div>
+    <div class="metric">
+        <span>Итоговая оценка риска <button type="button" class="info-button" data-modal-open="risk-summary-info">?</button></span>
+        <b>{{ result.summary.obschaya_ocenka_riska|ru(3) }}</b>
+    </div>
+</div>
+<dialog class="info-dialog" id="risk-summary-info">
+    <form method="dialog">
+        <button class="dialog-close" value="close">×</button>
+        <h3>Итоговая оценка риска</h3>
+        <p>Это максимальная оценка риска среди этапов рекомендации: R = max(p1, p2, ...). Такой расчет не усредняет опасный этап с более спокойными этапами.</p>
+        <p>Общий статус становится допустимым только когда все этапы допустимы и нет предупреждений по совместимости слоев.</p>
+    </form>
+</dialog>
+
+{% if result.summary.preduprezhdeniya_sovmestimosti %}
+<section class="card warning-panel">
+    <h2>Предупреждения по совместимости покрытий</h2>
+    <div class="warning-list">
+        {% for warning in result.summary.preduprezhdeniya_sovmestimosti %}<div class="warning-item">{{ warning }}</div>{% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="card">
+    <h2>Геометрия линзы</h2>
+    <table class="params">
+        <tr><th>h края</th><td>{{ result.linza.h_kraya_mm|ru(2) }} мм</td><th>d</th><td>{{ result.linza.d_mm|ru(1) }} мм</td></tr>
+        <tr><th>R1</th><td>{{ result.linza.r1_mm|ru(1) }} мм</td><th>R2</th><td>{{ result.linza.r2_mm|ru(1) }} мм</td></tr>
+        <tr><th>Материал</th><td>{{ run.material.name if run.material else result.material.name }}</td><th>Проверка</th><td>геометрия допустима</td></tr>
+    </table>
+</section>
+
+{% for step in result.steps %}
+<section class="card step-card">
+    <div class="step-head">
+        <h2>Этап {{ step.nomer_etapa }}. {{ step.pokrytie }}</h2>
+        <span class="badge">{{ step.status }}</span>
+    </div>
+
+    <h3>Состав и нанесение</h3>
+    <table class="params small-table">
+        <tr><th>Тип покрытия</th><td>{{ step.tip_pokrytiya }}</td><th>Тип пропитки</th><td>{{ step.tip_propitki_otobrazhenie or step.tip_propitki }}</td></tr>
+        <tr><th>Метод нанесения</th><td>{{ step.metod_naneseniya }}</td><th>Категория слоя</th><td>{% if step.tolko_vneshniy_sloy %}финишное покрытие{% else %}допускает последующие слои{% endif %}</td></tr>
+        <tr><th>Оборудование</th><td>{{ step.sreda_sushki }}</td><th>Метод сушки</th><td>{{ step.metod_sushki }}</td></tr>
+    </table>
+    <p>{{ step.sostav }}</p>
+    <p>Назначение: {{ step.naznachenie }}.</p>
+
+    <h3>Сопоставление с архивом</h3>
+    <table class="params small-table">
+        <tr><th>Использовано похожих этапов</th><td>{{ step.arhiv_stat.found }}</td><th>Удачных похожих этапов</th><td>{{ step.arhiv_stat.good }}</td></tr>
+        <tr><th>Брак в выборке</th><td>{{ step.arhiv_stat.defect_rate|ru(3) }}</td><th>Качество моделей</th><td>{{ step.arhiv_stat.model_quality|ru(3) }}</td></tr>
+        <tr>
+            <th>Индекс экстраполяции <button type="button" class="info-button" data-modal-open="extrapolation-{{ step.nomer_etapa }}">?</button></th>
+            <td>{{ step.arhiv_stat.extrapolation_index|ru(3) }}</td>
+            <th></th><td></td>
+        </tr>
+    </table>
+    <dialog class="info-dialog" id="extrapolation-{{ step.nomer_etapa }}">
+        <form method="dialog">
+            <button class="dialog-close" value="close">×</button>
+            <h3>Индекс экстраполяции</h3>
+            <p>Здесь это среднее расстояние текущего режима от центра архивной выборки в стандартизованных признаках регрессионных моделей.</p>
+            <p>Для каждой модели считается z(x) = (x - среднее архива) / стандартное отклонение архива, затем d = sqrt(mean(z²)). Индекс на экране — среднее d по построенным моделям этапа.</p>
+            <p>Около 0 означает близко к среднему архивному режиму, около 1 — в пределах типичного разброса архива, значения выше 2 означают заметную экстраполяцию.</p>
+        </form>
+    </dialog>
+
+    <h3>Данные расчета</h3>
+    <table class="params">
+        <tr><th>Старт этапа</th><td>{{ step.temperatura_starta_c|ru(1) }} °C</td><th>Температура сушки</th><td>{{ step.temperatura_sush_c|ru(1) }} °C</td></tr>
+        <tr><th>Выдержка</th><td>{{ step.vremya_vyderzhki_min|ru(1) }} мин</td><th>Нагрев</th><td>{{ step.vremya_razgona_min|ru(1) }} мин при {{ step.skorost_razgona_c_min|ru(2) }} °C/мин</td></tr>
+        <tr><th>Охлаждение</th><td>скорость не более {{ step.skorost_ohlazhdeniya_c_min|ru(2) }} °C/мин</td><th></th><td></td></tr>
+        <tr><th>При охлаждении до 22 °C полное время сушки</th><td>{{ step.polnoe_vremya_etapa_min|ru(1) }} мин</td><th></th><td></td></tr>
+        {% if step.davlenie_sush_pa is not none %}<tr><th>p суш</th><td>{{ step.davlenie_sush_pa|ru(0) }} Па</td><th></th><td></td></tr>{% endif %}
+        {% if step.skorost_vozduha_ms is not none %}<tr><th>Vвозд</th><td>{{ step.skorost_vozduha_ms|ru(2) }} м/с</td><th>φ</th><td>{{ step.vlazhnost_sredy_pct|ru(1) }} %</td></tr>{% endif %}
+        <tr><th>W ост</th><td>{{ step.w_ost_pct|ru(2) }} %</td><th>delta T</th><td>{{ step.delta_t_c|ru(2) }} °C</td></tr>
+        <tr><th>Температурный предел этапа</th><td>{{ step.temperaturnyi_predel_c|ru(1) }} °C</td><th>Коэффициент порога температуры</th><td>{{ step.koeffitsient_poroga_temperatury_pct|ru(1) }} %</td></tr>
+        <tr><th>delta L</th><td>{{ step.delta_l_mkm|ru(3) }} мкм</td><th>Ограничивает</th><td>{{ step.istochnik_temperaturnogo_predela }}</td></tr>
+        <tr>
+            <th>Оценка риска <button type="button" class="info-button" data-modal-open="risk-step-{{ step.nomer_etapa }}">?</button></th>
+            <td>{{ step.ocenka_riska|ru(3) }}</td><th></th><td></td>
+        </tr>
+    </table>
+    <dialog class="info-dialog" id="risk-step-{{ step.nomer_etapa }}">
+        <form method="dialog">
+            <button class="dialog-close" value="close">×</button>
+            <h3>Оценка риска этапа</h3>
+            <p>Это расчетная вероятность дефектного исхода p для конкретного этапа. Для графика p деф от Tсуш метка дефекта равна 1 для температурного дефекта этапа и 0 для годного этапа.</p>
+            <p>Значение p деф получается сигмоидной функцией p деф = 1 / (1 + exp(-(k·Tсуш + b))).</p>
+            <p>Верхняя граница допуска p_high подбирается по архивным прогнозам. Значения выше нее требуют контроля; значения выше расчетной границы p_border считаются режимом на границе допуска.</p>
+        </form>
+    </dialog>
+
+    <h3>Алгоритм покрытия</h3>
+    <ol class="profile">
+        {% for item in step.profile %}
+        <li><strong>{{ item.operation }}.</strong> {{ item.description }}</li>
+        {% endfor %}
+    </ol>
+
+    {% if step.warnings %}
+    <div class="warning-list compact">
+        {% for warning in step.warnings %}<div class="warning-item">{{ warning }}</div>{% endfor %}
+    </div>
+    {% endif %}
+</section>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Личный кабинет{% endblock %}
+{% block content %}
+<section class="hero compact">
+    <h1>Личный кабинет</h1>
+</section>
+
+{% if message %}<div class="alert success">{{ message }}</div>{% endif %}
+
+<section class="card">
+    <h2>Данные аккаунта</h2>
+    {% if profile_error %}<div class="alert">{{ profile_error }}</div>{% endif %}
+    <form method="post" action="{{ url_for('main.account_profile_update') }}" class="form-grid compact-labels">
+        <div class="field"><label>Логин</label><input type="text" name="username" value="{{ user.username }}" required></div>
+        <div class="field wide2"><label>Имя сотрудника</label><input type="text" name="employee_name" value="{{ user.employee_name }}" required></div>
+        <div class="field"><label>Текущий пароль</label><input type="password" name="password" required></div>
+        <div class="wide actions"><button type="submit">Сохранить данные</button></div>
+    </form>
+</section>
+
+<section class="card">
+    <h2>Изменение пароля</h2>
+    {% if password_error %}<div class="alert">{{ password_error }}</div>{% endif %}
+    <form method="post" action="{{ url_for('main.account_password_update') }}" class="form-grid compact-labels">
+        <div class="field"><label>Старый пароль</label><input type="password" name="old_password" required></div>
+        <div class="field"><label>Новый пароль</label><input type="password" name="new_password" required></div>
+        <div class="field"><label>Повтор нового пароля</label><input type="password" name="confirm_password" required></div>
+        <div class="wide actions"><button type="submit">Изменить пароль</button></div>
+    </form>
+</section>
+{% endblock %}

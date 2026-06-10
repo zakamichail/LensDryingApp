@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="hero compact">
+    <h1>{{ heading }}</h1>
+    <p>Код ошибки: {{ status_code }}.</p>
+</section>
+
+<section class="card">
+    <p>{{ message }}</p>
+    <p class="actions">
+        {% if current_user.id %}
+        <a class="button" href="{{ url_for('main.index') }}">К расчету</a>
+        <a class="button-secondary" href="{{ url_for('main.history') }}">История</a>
+        {% else %}
+        <a class="button" href="{{ url_for('main.login') }}">Войти</a>
+        {% endif %}
+    </p>
+</section>
+{% endblock %}

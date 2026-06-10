@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Справочники{% endblock %}
+{% block content %}
+<section class="hero compact"><h1>Справочные данные</h1></section>
+<section class="card">
+<div class="card-head">
+    <h2>Материалы</h2>
+    {% if current_user.is_admin %}<a class="button-secondary" href="{{ url_for('main.material_new') }}">Добавить материал</a>{% endif %}
+</div>
+<div class="scroll-table">
+<table class="ref-table material-table">
+<tr>
+    <th>Код материала</th><th>Название материала</th><th>Группа</th>
+    <th>λ, теплопроводность, Вт/(м·К)</th><th>ρ, плотность, кг/м³</th><th>c, удельная теплоемкость, Дж/(кг·К)</th>
+    <th>α, коэффициент теплового расширения, 1/К</th><th>Tg, температура стеклования, °C</th><th>Tmax, максимально допустимая температура, °C</th>{% if current_user.is_admin %}<th></th>{% endif %}
+</tr>
+{% for m in materials %}
+<tr>
+    <td>{{ m.kod }}</td>
+    <td>{{ m.name }}</td>
+    <td>{{ m.group }}</td>
+    <td>{{ m.lambda_w_mk|ru(3) }}</td>
+    <td>{{ m.density_kg_m3|ru(0) }}</td>
+    <td>{{ m.heat_capacity_j_kgk|ru(0) }}</td>
+    <td>{{ m.expansion_1_k|rusci }}</td>
+    <td>{{ m.tg_c|ru(0) }}</td>
+    <td>{{ m.t_max_c|ru(0) }}</td>
+    {% if current_user.is_admin %}<td class="actions-cell"><a href="{{ url_for('main.material_edit', item_id=m.id) }}">править</a></td>{% endif %}
+</tr>
+{% endfor %}
+</table>
+</div>
+</section>
+<section class="card">
+<div class="card-head">
+    <h2>Пропиточные составы</h2>
+    {% if current_user.is_admin %}<a class="button-secondary" href="{{ url_for('main.impregnation_new') }}">Добавить состав</a>{% endif %}
+</div>
+<div class="scroll-table">
+<table class="ref-table impregnation-table">
+<tr>
+    <th>Код состава</th><th>Марка или идентификатор</th><th>Функциональный тип покрытия</th><th>Ограничение по верхнему слою</th><th>Тип пропитки по основе</th><th>Состав</th><th>Назначение</th>
+    <th>η, вязкость, мПа·с</th><th>σ, поверхностное натяжение, мН/м</th><th>W0, начальное содержание летучих компонентов, %</th><th>Tmax состава, °C</th>{% if current_user.is_admin %}<th></th>{% endif %}
+</tr>
+{% for i in impregnations %}
+<tr>
+    <td>{{ i.kod }}</td>
+    <td>{{ i.name }}</td>
+    <td>{{ i.stage_group }}</td>
+    <td>{% if i.external_only %}не перекрывать следующим слоем{% else %}допускает последующие слои{% endif %}</td>
+    <td>{{ i.base_display }}</td>
+    <td class="text-col">{{ i.composition }}</td>
+    <td class="text-col">{{ i.purpose }}</td>
+    <td>{{ i.viscosity_mpa_s|ru(1) }}</td>
+    <td>{{ i.surface_tension_mn_m|ru(1) }}</td>
+    <td>{{ i.initial_solvent_pct|ru(1) }}</td>
+    <td>{{ i.thermal_stability_c|ru(1) }}</td>
+    {% if current_user.is_admin %}<td class="actions-cell"><a href="{{ url_for('main.impregnation_edit', item_id=i.id) }}">править</a></td>{% endif %}
+</tr>
+{% endfor %}
+</table>
+</div>
+</section>
+{% endblock %}

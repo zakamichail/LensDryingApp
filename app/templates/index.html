@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Расчет режима сушки{% endblock %}
+{% block content %}
+<section class="hero calculation-hero">
+    <div>
+        <h1>Режим пропитки и сушки линзы</h1>
+    </div>
+    <div class="hero-meta">
+        <span>{{ archive_count }} записей в архиве</span>
+        <span>до 5 покрытий за запуск</span>
+    </div>
+</section>
+
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+
+<form id="calculation-form" action="{{ url_for('main.recommend') }}" method="post" class="panel calculation-form">
+    <section class="form-section">
+        <div class="section-head wide">
+            <div>
+                <h2>Линза</h2>
+            </div>
+        </div>
+        <div class="field wide">
+            <label>Материал</label>
+            <select name="material_key" required>
+                {% for material in materials %}
+                <option value="{{ material.form_value }}">{{ material.name }}, {{ material.group }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field"><label>h края, мм</label><input type="text" name="h_kraya_mm" value="2,0" required></div>
+        <div class="field"><label>d, диаметр, мм</label><input type="text" name="d_mm" value="62" required></div>
+        <div class="field"><label>R1, мм</label><input type="text" name="r1_mm" value="120" required></div>
+        <div class="field"><label>R2, мм</label><input type="text" name="r2_mm" value="-120" required></div>
+        <div class="field wide note-field"><small>Знак радиуса задает форму поверхности: положительное значение считается выпуклым, отрицательное вогнутым. Центральная толщина рассчитывается внутри программы. Если по радиусам получается нулевая или отрицательная толщина, расчет не выполняется.</small></div>
+    </section>
+
+    <section class="form-section">
+        <div class="section-head wide">
+            <div>
+                <h2>Параметры модели</h2>
+            </div>
+        </div>
+        <div class="field range-field wide2">
+            <label for="archive-weight">Вес архива</label>
+            <div class="range-head"><span>0 %</span><output for="archive-weight" data-range-output>50 %</output><span>100 %</span></div>
+            <input id="archive-weight" type="range" name="archive_weight_pct" min="0" max="100" step="1" value="50" data-range-input required>
+        </div>
+        <div class="field range-field wide2">
+            <label for="temperature-threshold">Коэффициент порога температуры</label>
+            <div class="range-head"><span>50 %</span><output for="temperature-threshold" data-range-output>90 %</output><span>100 %</span></div>
+            <input id="temperature-threshold" type="range" name="temperature_threshold_pct" min="50" max="100" step="1" value="90" data-range-input required>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="section-head wide">
+            <div>
+                <h2>Требуемые покрытия</h2>
+            </div>
+        </div>
+        <div class="field wide">
+            <div class="impregnation-groups">
+                {% for group_name, group_items in impregnations|groupby('stage_group') %}
+                <section class="impregnation-group">
+                    <h3>{{ group_name }}</h3>
+                    <div class="checks">
+                        {% for item in group_items %}
+                        <label><input type="checkbox" name="selected_layers" value="{{ item.id }}" data-layer-checkbox> <span>{{ item.name }}</span><small>{{ item.base_display }}</small></label>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endfor %}
+            </div>
+            <div id="layer-limit-warning" class="inline-warning" hidden>Можно выбрать не больше 5 пропиток, потому что архивный CSV поддерживает до 5 этапов.</div>
+        </div>
+    </section>
+
+    <div class="form-footer">
+        <button type="submit" id="recommend-submit">Рассчитать режим</button>
+    </div>
+</form>
+<div class="submit-overlay" id="calculation-overlay" hidden>
+    <div class="submit-overlay-box">Расчет...</div>
+</div>
+<script>
+const calculationForm = document.getElementById("calculation-form");
+const layerCheckboxes = Array.from(document.querySelectorAll("[data-layer-checkbox]"));
+const submitButton = document.getElementById("recommend-submit");
+const warning = document.getElementById("layer-limit-warning");
+const rangeInputs = Array.from(document.querySelectorAll("[data-range-input]"));
+const calculationOverlay = document.getElementById("calculation-overlay");
+
+function updateLayerLimit() {
+    const selectedCount = layerCheckboxes.filter((item) => item.checked).length;
+    const isOverLimit = selectedCount > 5;
+    submitButton.disabled = isOverLimit;
+    warning.hidden = !isOverLimit;
+}
+
+layerCheckboxes.forEach((item) => item.addEventListener("change", updateLayerLimit));
+updateLayerLimit();
+
+function updateRangeOutput(input) {
+    const output = input.closest(".range-field").querySelector("[data-range-output]");
+    const label = `${input.value} %`;
+    output.value = label;
+    output.textContent = label;
+}
+
+rangeInputs.forEach((item) => {
+    item.addEventListener("input", () => updateRangeOutput(item));
+    updateRangeOutput(item);
+});
+
+calculationForm.addEventListener("submit", (event) => {
+    if (layerCheckboxes.filter((item) => item.checked).length > 5) {
+        event.preventDefault();
+        updateLayerLimit();
+        return;
+    }
+    submitButton.disabled = true;
+    calculationOverlay.hidden = false;
+});
+</script>
+{% endblock %}
